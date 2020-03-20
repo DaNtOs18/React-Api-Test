@@ -1,0 +1,56 @@
+.flex {
+  display: flex;
+}
+
+input {
+  margin-right: 1rem;
+}
+
+p {
+  margin: 0;
+}
+
+.my-1 {
+  margin-top: 1rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.my-05 {
+  margin-top: 0.35rem !important;
+  margin-bottom: 0.15rem !important;
+}
+
+.bg-gray {
+  background-color: #f7fafc !important;
+}
+
+h3 {
+  color: #2d3748 !important;
+  font-style: italic !important;
+  font-weight: 900 !important;
+}
+
+.shadow-xl {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.rounded-md {
+  border-radius: 0.375rem !important;
+}
+
+.text-red {
+  color: #e53935 !important;
+}
+
+.text-green {
+  color: #66bb6a !important;
+}
+
+.text-yellow {
+  color: #ffb74d !important;
+}
+
+.MuiFormHelperText-root {
+  font-size: 1rem !important;
+}
