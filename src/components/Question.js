@@ -11,27 +11,56 @@ import Button from '@material-ui/core/Button';
 import "./Question.css";
 
 class Question extends Component {
-    state = {
-        allAnswers: [],
-        message: "",
-        styleMessage: "",
-        disabled: false
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            title: "",
+            allAnswersShuffled: [],
+            answerChecked: false,
+            message: "",
+            styleMessage: "",
+            disabled: false
+        }
     }
 
-    checkAnswer = (idQuestion) => {
-        var answers = document.getElementsByName("answer" + idQuestion);
-        for (let answer of answers) {
-            if (answer.checked) {
-                let result = (answer.value === this.props.question.correct_answer) ? "Correcto" : "Incorrecto";
-                (result === "Correcto") ? this.setState({ styleMessage: "my-05 text-green" }) : this.setState({ styleMessage: "my-05 text-red" });
-                this.setState({ message: result, disabled: true });
-                return true;
-            }
-        }
-        this.setState({
-            message: "You must choose an answer first.",
-            styleMessage: "my-05 text-yellow"
-        });
+    componentWillMount() {
+        this.setState({ title: this.decode(this.props.question.question) });
+        const { correct_answer, incorrect_answers } = this.props.question;
+        this.setState({ allAnswersShuffled: this.shuffle([...incorrect_answers, correct_answer]) });
+        if (this.state.allAnswersShuffled.find(e => e === "True") && this.state.allAnswersShuffled.find(e => e === "False")) this.setState({ allAnswersShuffled: ["True", "False"] });
+    }
+
+    render() {
+        //throw new Error("message");
+        console.log("estoy renderizando");
+        const { id } = this.props.question;
+        const { title, allAnswersShuffled, message, styleMessage, disabled } = this.state;
+        return (
+            <Grid container justify="center" alignItems="center" className="my-1">
+                <Grid item xs={3}>
+                    <Card variant="outlined" className="bg-gray rounded-md">
+                        <CardContent >
+                            <Typography component="h3" className="text-gray my-1">{title}</Typography >
+                            <RadioGroup name={"answer" + id}>
+                                {allAnswersShuffled.map((answer, i) =>
+                                    <FormControlLabel key={i} value={answer} control={<Radio />} label={answer} disabled={disabled} />
+                                )}
+                            </RadioGroup>
+                            <FormHelperText className={styleMessage} >{message}</FormHelperText>
+                            <Button onClick={() => this.checkAnswer(id)} variant="contained" color="secondary" className="my-1" disabled={disabled}>Check answer</Button>
+                        </CardContent>
+                    </Card >
+                </Grid>
+            </Grid>
+        )
+    }
+
+    decode(codified) {
+        var parser = new DOMParser();
+        var dom = parser.parseFromString('<!doctype html><body>' + codified, 'text/html');
+        var decodedString = dom.body.textContent;
+        return codified = decodedString;
     }
 
     shuffle(array) {
@@ -46,35 +75,31 @@ class Question extends Component {
         return array;
     }
 
-    componentDidMount() {
-        const { correct_answer, incorrect_answers } = this.props.question;
-        this.setState({ allAnswers: this.shuffle([...incorrect_answers, correct_answer]) });
+    checkAnswer = (idQuestion) => {
+        var answers = document.getElementsByName("answer" + idQuestion);
+        for (let answer of answers) {
+            if (answer.checked) {
+                let result = (answer.value === this.props.question.correct_answer) ? "Correcto" : "Incorrecto";
+                (result === "Correcto") ? this.setState({ styleMessage: "my-05 text-green" }) : this.setState({ styleMessage: "my-05 text-red" });
+                this.setState({ answerChecked: true, message: result, disabled: true });
+                return true;
+            }
+        }
+        this.setState({
+            message: "You must choose an answer first.",
+            styleMessage: "my-05 text-yellow"
+        });
     }
+ 
+    //Cheater
+    /*
+    componentDidUpdate() {
+        if (this.state.message === "Incorrecto" && this.state.answerChecked === true) {
+            this.setState({ answerChecked: false, disabled: false })
+        }
+    }
+    */
 
-    render() {
-        const { id, question } = this.props.question;
-        const { allAnswers, message, styleMessage, disabled } = this.state;
-        let allAnswersShuffled = allAnswers;
-        if (allAnswersShuffled.find(e => e === "True") && allAnswersShuffled.find(e => e === "False")) allAnswersShuffled = ["True", "False"];
-        return (
-            <Grid container justify="center" alignItems="center" className="my-1">
-                <Grid item xs={3}>
-                    <Card variant="outlined" className="bg-gray rounded-md">
-                        <CardContent >
-                            <Typography component="h3" className="text-gray my-1">{question}</Typography >
-                            <RadioGroup name={"answer" + id}>
-                                {allAnswersShuffled.map((answer, i) =>
-                                    <FormControlLabel key={i} value={answer} control={<Radio />} label={answer} disabled={disabled} />
-                                )}
-                            </RadioGroup>
-                            <FormHelperText className={styleMessage} >{message}</FormHelperText>
-                            <Button onClick={() => this.checkAnswer(id)} variant="contained" color="secondary" className="my-1" disabled={disabled}>Check answer</Button>
-                        </CardContent>
-                    </Card >
-                </Grid>
-            </Grid>
-        )
-    }
 }
 
 export default Question;

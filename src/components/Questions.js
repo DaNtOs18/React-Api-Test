@@ -2,18 +2,12 @@ import React, { Component } from "react";
 import Grid from '@material-ui/core/Grid';
 import "./Questions.css";
 import Question from './Question';
+import ErrorBoundary from './ErrorBoundary';
 
 class Questions extends Component {
   state = {
     questions: []
   };
-
-  decode(codified) {
-    var parser = new DOMParser();
-    var dom = parser.parseFromString('<!doctype html><body>' + codified, 'text/html');
-    var decodedString = dom.body.textContent;
-    return codified = decodedString;
-  }
 
   async componentDidMount() {
     /*
@@ -30,19 +24,21 @@ class Questions extends Component {
     const questionsList = await fetch("https://opentdb.com/api.php?amount=10&category=27&difficulty=easy")
       .then(datas => datas.json())
       .then(json => json.results.map((data, index) => {
-        let title = this.decode(data.question);
-        data.question = title;
         data.id = index;
         return data;
       }));
+    //this.setState({ questions });
     this.setState({ questions: questionsList });
   }
 
   render() {
+    //throw new Error("pepito");
     return (
       <Grid container justify="center">{
         this.state.questions.map((e, index) =>
-          <Question question={e} key={index} />
+          <ErrorBoundary key={index}>
+            <Question question={e} key={index} />
+          </ErrorBoundary>
         )
       }</Grid>
     );

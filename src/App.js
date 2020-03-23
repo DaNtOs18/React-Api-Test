@@ -1,11 +1,14 @@
 import React from 'react';
 import './App.css';
 import Questions from './components/Questions';
+import ErrorBoundary from './components/ErrorBoundary';
 
 function App() {
   return (
     <div>
-      <Questions />
+      <ErrorBoundary>
+        <Questions />
+      </ErrorBoundary>
     </div>
   );
 }
